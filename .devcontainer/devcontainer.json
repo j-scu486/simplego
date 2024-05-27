@@ -1,0 +1,29 @@
+{
+    "name": "goweb-dev",
+    "dockerFile": "Dockerfile",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "enableNonRootDocker": "false",
+            "moby": "false"
+        },
+        "ghcr.io/devcontainers/features/go:1": {
+            "version": "1.22.3"
+        },
+        "ghcr.io/brokeyourbike/devcontainer-features/staticcheck:0": {}
+    },
+    "privileged": true,
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go"
+            ]
+        }
+    },
+    "postCreateCommand": "bash inittools.bash",
+
+    // maybe these are only needed on Podman, not Docker
+    "runArgs": ["--userns=keep-id"],
+    "remoteUser": "vscode",
+    "containerUser": "vscode"
+}

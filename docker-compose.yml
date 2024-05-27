@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: docker.io/library/mysql:8.0.36-bookworm
+    env_file:
+      - .env
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql:/var/lib/mysql
+
+  goweb:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    command: air -c air.toml
+    depends_on:
+      - mysql
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    working_dir: /app
+
+volumes:
+  mysql:

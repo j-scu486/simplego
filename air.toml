@@ -1,0 +1,29 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "CGO_ENABLED=0 go build -ldflags='-s -w' -buildvcs=false -o tmp/app cmd/main.go"
+bin = "tmp/app"
+include_ext = ["go"]
+exclude_dir = ["tmp"]
+exclude_regex = ["_test\\.go"]
+exclude_unchanged = true
+follow_symlink = true
+log = "air.log"
+poll = false
+delay = 1000
+stop_on_error = true
+send_interrupt = true
+kill_delay = 500
+rerun = false
+rerun_delay = 500
+
+[log]
+time = false
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = true
+keep_scroll = true
