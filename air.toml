@@ -2,7 +2,7 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "CGO_ENABLED=0 go build -ldflags='-s -w' -buildvcs=false -o tmp/app cmd/main.go"
+cmd = "CGO_ENABLED=0 go build -ldflags='-s -w' -buildvcs=false -o tmp/app cmd/api/*.go"
 bin = "tmp/app"
 include_ext = ["go"]
 exclude_dir = ["tmp"]
