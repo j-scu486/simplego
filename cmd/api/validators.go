@@ -7,10 +7,10 @@ import (
 )
 
 type Item struct {
-	Name     string  `validate:"required"`
-	Price    float64 `validate:"required"`
-	Quantity int     `validate:"required"`
-	OnSale   bool    `validate:"required"`
+	Name     string  `validate:"required, max=40"`
+	Price    float64 `validate:"required, numeric, gt=0"`
+	Quantity int     `validate:"required, number"`
+	OnSale   bool    `validate:"required, boolean"`
 }
 
 func validateItem(i *Item) error {
