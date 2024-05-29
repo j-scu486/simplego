@@ -12,11 +12,3 @@ INSERT INTO goweb.items (
 ) VALUES (
   ?, ?, ?, ?, NOW(), NOW(), NULL
 );
-
--- name: CreateStore :exec
-INSERT INTO goweb.stores (
-  name, owner, created_at, updated_at, deleted_at
-)
-VALUES (
-  ?, ?, NOW(), NOW(), NULL
-);

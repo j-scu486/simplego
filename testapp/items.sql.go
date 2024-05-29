@@ -36,25 +36,6 @@ func (q *Queries) CreateItem(ctx context.Context, arg CreateItemParams) error {
 	return err
 }
 
-const createStore = `-- name: CreateStore :exec
-INSERT INTO goweb.stores (
-  name, owner, created_at, updated_at, deleted_at
-)
-VALUES (
-  ?, ?, NOW(), NOW(), NULL
-)
-`
-
-type CreateStoreParams struct {
-	Name  string
-	Owner StoresOwner
-}
-
-func (q *Queries) CreateStore(ctx context.Context, arg CreateStoreParams) error {
-	_, err := q.db.ExecContext(ctx, createStore, arg.Name, arg.Owner)
-	return err
-}
-
 const getItem = `-- name: GetItem :one
 SELECT i.id, i.created_at, i.updated_at, i.deleted_at, i.name, i.price, i.quantity, i.onsale, s.id, s.created_at, s.updated_at, s.deleted_at, s.name, s.owner
 FROM goweb.items i
