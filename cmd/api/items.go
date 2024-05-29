@@ -17,10 +17,10 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	name := r.FormValue("name")
-	priceStr := r.FormValue("price")
-	quantityStr := r.FormValue("quantity")
-	onSaleStr := r.FormValue("on_sale")
+	name := r.PostFormValue("name")
+	priceStr := r.PostFormValue("price")
+	quantityStr := r.PostFormValue("quantity")
+	onSaleStr := r.PostFormValue("on_sale")
 
 	if name == "" || priceStr == "" || quantityStr == "" || onSaleStr == "" {
 		http.Error(w, "Error parsing form data", http.StatusBadRequest)
