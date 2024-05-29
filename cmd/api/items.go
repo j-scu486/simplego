@@ -35,7 +35,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 		OnSale:   itemFormData.OnSale,
 	}
 
-	err = validateItem(item)
+	err = validate.Struct(item)
 
 	if err != nil {
 		log.Fatal("Invalid Item")

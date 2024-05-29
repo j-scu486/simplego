@@ -84,7 +84,7 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 		Owner: r.FormValue("owner"),
 	}
 
-	err = validateStore(store)
+	err = validate.Struct(store)
 
 	if err != nil {
 		log.Fatal("Invalid Store")

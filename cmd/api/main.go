@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type config struct {
@@ -18,6 +20,8 @@ type application struct {
 	config config
 	logger *slog.Logger
 }
+
+var validate = validator.New(validator.WithRequiredStructEnabled())
 
 func main() {
 	var cfg config
