@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"goweb/testapp"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -39,7 +38,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	err = validate.Struct(item)
 
 	if err != nil {
-		log.Fatal("Invalid Item")
+		app.writeJSON(w, http.StatusInternalServerError, err, nil)
 		return
 	}
 

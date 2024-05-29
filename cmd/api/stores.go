@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"goweb/testapp"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -87,7 +86,7 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 	err = validate.Struct(store)
 
 	if err != nil {
-		log.Fatal("Invalid Store")
+		app.writeJSON(w, http.StatusInternalServerError, err, nil)
 		return
 	}
 
