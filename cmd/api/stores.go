@@ -19,6 +19,7 @@ func (app *application) showStoreItemsHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	queries, ctx, db := app.connectDB()
+	defer db.Close()
 	items, storeErr := queries.GetStoreItems(ctx, uint32(id))
 
 	if storeErr != nil {
@@ -36,8 +37,6 @@ func (app *application) showStoreItemsHandler(w http.ResponseWriter, r *http.Req
 		app.logger.Error(jsonErr.Error())
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
 	}
-
-	db.Close()
 }
 
 func (app *application) showStoreHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +49,7 @@ func (app *application) showStoreHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	queries, ctx, db := app.connectDB()
+	defer db.Close()
 	items, storeErr := queries.GetStore(ctx, uint32(id))
 
 	if storeErr != nil {
@@ -67,8 +67,6 @@ func (app *application) showStoreHandler(w http.ResponseWriter, r *http.Request)
 		app.logger.Error(jsonErr.Error())
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
 	}
-
-	db.Close()
 }
 
 func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +89,7 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	queries, ctx, db := app.connectDB()
+	defer db.Close()
 
 	err = queries.CreateStore(ctx, testapp.CreateStoreParams{
 		Name:  store.Name,
@@ -98,10 +97,10 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 	})
 
 	if err != nil {
-		app.writeJSON(w, http.StatusInternalServerError, err, nil)
+		app.logger.Error(err.Error())
+		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		return
 	}
 
 	app.writeJSON(w, http.StatusCreated, store, nil)
-
-	db.Close()
 }

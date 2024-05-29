@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"goweb/testapp"
-	"log"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -21,6 +20,7 @@ type ItemFormData struct {
 func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
+		app.logger.Error(err.Error())
 		http.Error(w, "Error parsing form data", http.StatusBadRequest)
 		return
 	}
@@ -38,7 +38,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	err = validate.Struct(item)
 
 	if err != nil {
-		log.Panic(err)
+		app.logger.Error(err.Error())
 		return
 	}
 
@@ -52,7 +52,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	})
 
 	if err != nil {
-		log.Panic(err)
+		app.logger.Error(err.Error())
 	}
 
 	if len(itemFormData.Stores) > 0 {
@@ -65,7 +65,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 			})
 
 			if err != nil {
-				log.Panic(err)
+				app.logger.Error(err.Error())
 			}
 		}
 	}
