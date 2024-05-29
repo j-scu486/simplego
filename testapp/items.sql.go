@@ -41,7 +41,7 @@ SELECT i.id, i.created_at, i.updated_at, i.deleted_at, i.name, i.price, i.quanti
 FROM goweb.items i
 JOIN goweb.stores_items si ON i.id = si.item_id
 JOIN goweb.stores s ON si.store_id = s.id
-WHERE i.id = ?
+WHERE i.name LIKE ?
 LIMIT 1
 `
 
@@ -62,8 +62,8 @@ type GetItemRow struct {
 	Owner       StoresOwner
 }
 
-func (q *Queries) GetItem(ctx context.Context, id uint32) (GetItemRow, error) {
-	row := q.db.QueryRowContext(ctx, getItem, id)
+func (q *Queries) GetItem(ctx context.Context, name string) (GetItemRow, error) {
+	row := q.db.QueryRowContext(ctx, getItem, name)
 	var i GetItemRow
 	err := row.Scan(
 		&i.ID,

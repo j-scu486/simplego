@@ -3,7 +3,7 @@ SELECT i.*, s.*
 FROM goweb.items i
 JOIN goweb.stores_items si ON i.id = si.item_id
 JOIN goweb.stores s ON si.store_id = s.id
-WHERE i.id = ?
+WHERE i.name LIKE ?
 LIMIT 1;
 
 -- name: CreateItem :exec

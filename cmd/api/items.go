@@ -6,7 +6,6 @@ import (
 	"goweb/testapp"
 	"log"
 	"net/http"
-	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -75,24 +74,18 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) showItemHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
 
-	if idStr == "" {
-		http.Error(w, "ID is not valid!", http.StatusBadRequest)
-		return
-	}
-
-	id, err := strconv.ParseUint(idStr, 10, 32)
-	if err != nil {
-		http.Error(w, "Invalid 'id' query parameter", http.StatusBadRequest)
+	if name == "" {
+		http.Error(w, "Item name is not valid!", http.StatusBadRequest)
 		return
 	}
 
 	queries, ctx, db := app.connectDB()
-	items, queryErr := queries.GetItem(ctx, uint32(id))
+	items, queryErr := queries.GetItem(ctx, `%`+name+`%`)
 
 	if queryErr != nil {
-		msg := fmt.Sprintf("Could not find item with id %d", id)
+		msg := fmt.Sprintf("Could not find item with name %s", name)
 
 		http.Error(w, msg, http.StatusNotFound)
 		app.logger.Error(queryErr.Error())
