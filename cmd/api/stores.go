@@ -101,5 +101,7 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 		app.writeJSON(w, http.StatusInternalServerError, err, nil)
 	}
 
+	app.writeJSON(w, http.StatusCreated, store, nil)
+
 	db.Close()
 }

@@ -70,6 +70,8 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 		}
 	}
 
+	app.writeJSON(w, http.StatusCreated, item, nil)
+
 	db.Close()
 }
 
