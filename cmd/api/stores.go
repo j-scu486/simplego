@@ -84,7 +84,8 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 	err = validate.Struct(store)
 
 	if err != nil {
-		app.writeJSON(w, http.StatusInternalServerError, err, nil)
+		app.logger.Error(err.Error())
+		app.writeJSON(w, http.StatusBadRequest, err, nil)
 		return
 	}
 
@@ -98,7 +99,7 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		app.logger.Error(err.Error())
-		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		http.Error(w, "Could not create store", http.StatusInternalServerError)
 		return
 	}
 
