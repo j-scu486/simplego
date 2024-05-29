@@ -10,6 +10,37 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+func (app *application) showStoreItemsHandler(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
+
+	if err != nil {
+		http.Error(w, "Invalid 'id'", http.StatusBadRequest)
+		return
+	}
+
+	queries, ctx, db := app.connectDB()
+	items, storeErr := queries.GetStoreItems(ctx, uint32(id))
+
+	if storeErr != nil {
+		msg := fmt.Sprintf("Could not find store with id %d", id)
+
+		http.Error(w, msg, http.StatusNotFound)
+		app.logger.Error(storeErr.Error())
+
+		return
+	}
+
+	jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
+
+	if jsonErr != nil {
+		app.logger.Error(jsonErr.Error())
+		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+	}
+
+	db.Close()
+}
+
 func (app *application) showStoreHandler(w http.ResponseWriter, r *http.Request) {
 	params := httprouter.ParamsFromContext(r.Context())
 	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
