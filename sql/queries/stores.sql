@@ -3,13 +3,12 @@ SELECT * FROM goweb.stores
 WHERE id = ?
 LIMIT 1;
 
--- name: GetStoreItems :one
+-- name: GetStoreItems :many
 SELECT i.*, s.id
 FROM goweb.items i
 JOIN goweb.stores_items si ON i.id = si.item_id
 JOIN goweb.stores s ON si.store_id = s.id
-WHERE s.id = ?
-LIMIT 1;
+WHERE s.id = ?;
 
 -- name: CreateStore :exec
 INSERT INTO goweb.stores (

@@ -50,13 +50,12 @@ func (q *Queries) GetStore(ctx context.Context, id uint32) (GowebStore, error) {
 	return i, err
 }
 
-const getStoreItems = `-- name: GetStoreItems :one
+const getStoreItems = `-- name: GetStoreItems :many
 SELECT i.id, i.created_at, i.updated_at, i.deleted_at, i.name, i.price, i.quantity, i.onsale, s.id
 FROM goweb.items i
 JOIN goweb.stores_items si ON i.id = si.item_id
 JOIN goweb.stores s ON si.store_id = s.id
 WHERE s.id = ?
-LIMIT 1
 `
 
 type GetStoreItemsRow struct {
@@ -71,19 +70,35 @@ type GetStoreItemsRow struct {
 	ID_2      uint32
 }
 
-func (q *Queries) GetStoreItems(ctx context.Context, id uint32) (GetStoreItemsRow, error) {
-	row := q.db.QueryRowContext(ctx, getStoreItems, id)
-	var i GetStoreItemsRow
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.Name,
-		&i.Price,
-		&i.Quantity,
-		&i.Onsale,
-		&i.ID_2,
-	)
-	return i, err
+func (q *Queries) GetStoreItems(ctx context.Context, id uint32) ([]GetStoreItemsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getStoreItems, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetStoreItemsRow
+	for rows.Next() {
+		var i GetStoreItemsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Name,
+			&i.Price,
+			&i.Quantity,
+			&i.Onsale,
+			&i.ID_2,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
