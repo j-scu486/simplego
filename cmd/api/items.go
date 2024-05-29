@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"goweb/testapp"
 	"log"
@@ -10,6 +11,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+type ItemFormData struct {
+	Name     string  `json:"name"`
+	Price    float64 `json:"price"`
+	Quantity int     `json:"quantity"`
+	OnSale   bool    `json:"onsale"`
+}
+
 func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -17,39 +25,14 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	name := r.PostFormValue("name")
-	priceStr := r.PostFormValue("price")
-	quantityStr := r.PostFormValue("quantity")
-	onSaleStr := r.PostFormValue("on_sale")
-
-	if name == "" || priceStr == "" || quantityStr == "" || onSaleStr == "" {
-		http.Error(w, "Error parsing form data", http.StatusBadRequest)
-		return
-	}
-
-	price, err := strconv.ParseFloat(priceStr, 64)
-	if err != nil {
-		http.Error(w, "Error parsing form data", http.StatusBadRequest)
-		return
-	}
-
-	quantity, err := strconv.Atoi(quantityStr)
-	if err != nil {
-		http.Error(w, "Error parsing form data", http.StatusBadRequest)
-		return
-	}
-
-	onSale, err := strconv.ParseBool(onSaleStr)
-	if err != nil {
-		http.Error(w, "Error parsing form data", http.StatusBadRequest)
-		return
-	}
+	var itemFormData ItemFormData
+	json.NewDecoder(r.Body).Decode(&itemFormData)
 
 	item := &Item{
-		Name:     name,
-		Price:    price,
-		Quantity: quantity,
-		OnSale:   onSale,
+		Name:     itemFormData.Name,
+		Price:    itemFormData.Price,
+		Quantity: itemFormData.Quantity,
+		OnSale:   itemFormData.OnSale,
 	}
 
 	err = validateItem(item)
@@ -65,7 +48,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 		Name:     item.Name,
 		Price:    item.Price,
 		Quantity: uint32(item.Quantity),
-		Onsale:   toTinyInt(onSale),
+		Onsale:   toTinyInt(item.OnSale),
 	})
 
 	if err != nil {
