@@ -51,7 +51,7 @@ func (q *Queries) GetStore(ctx context.Context, id uint32) (GowebStore, error) {
 }
 
 const getStoreItems = `-- name: GetStoreItems :many
-SELECT i.id, i.created_at, i.updated_at, i.deleted_at, i.name, i.price, i.quantity, i.onsale, s.id
+SELECT i.id, i.created_at, i.updated_at, i.deleted_at, i.name, i.price, i.quantity, i.onsale, s.id AS store_id
 FROM goweb.items i
 JOIN goweb.stores_items si ON i.id = si.item_id
 JOIN goweb.stores s ON si.store_id = s.id
@@ -67,7 +67,7 @@ type GetStoreItemsRow struct {
 	Price     float64
 	Quantity  uint32
 	Onsale    int8
-	ID_2      uint32
+	StoreID   uint32
 }
 
 func (q *Queries) GetStoreItems(ctx context.Context, id uint32) ([]GetStoreItemsRow, error) {
@@ -88,7 +88,7 @@ func (q *Queries) GetStoreItems(ctx context.Context, id uint32) ([]GetStoreItems
 			&i.Price,
 			&i.Quantity,
 			&i.Onsale,
-			&i.ID_2,
+			&i.StoreID,
 		); err != nil {
 			return nil, err
 		}
