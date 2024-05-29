@@ -43,6 +43,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	queries, ctx, db := app.connectDB()
+	defer db.Close()
 
 	err = queries.CreateItem(ctx, testapp.CreateItemParams{
 		Name:     item.Name,
@@ -71,8 +72,6 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	app.writeJSON(w, http.StatusCreated, item, nil)
-
-	db.Close()
 }
 
 func (app *application) showItemHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,6 +83,7 @@ func (app *application) showItemHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	queries, ctx, db := app.connectDB()
+	defer db.Close()
 	items, queryErr := queries.GetItem(ctx, `%`+name+`%`)
 
 	if queryErr != nil {
@@ -101,6 +101,4 @@ func (app *application) showItemHandler(w http.ResponseWriter, r *http.Request) 
 		app.logger.Error(jsonErr.Error())
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
 	}
-
-	db.Close()
 }
