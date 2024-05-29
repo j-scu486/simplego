@@ -14,7 +14,7 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodPost, "/store", app.createStoreHandler)
 	router.HandlerFunc(http.MethodGet, "/store/:id", app.showStoreHandler)
-	// router.HandlerFunc(http.MethodGet, "/store/:id/items", app.showStoreItemsHandler)
+	router.HandlerFunc(http.MethodGet, "/store/:id/items", app.showStoreItemsHandler)
 
 	return router
 }
