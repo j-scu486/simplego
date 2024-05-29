@@ -16,6 +16,7 @@ type ItemFormData struct {
 	Price    float64 `json:"price"`
 	Quantity int     `json:"quantity"`
 	OnSale   bool    `json:"onsale"`
+	Stores   []int   `json:"stores"`
 }
 
 func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request) {

@@ -5,6 +5,7 @@ type Item struct {
 	Price    float64 `validate:"required,numeric,gt=0"`
 	Quantity int     `validate:"required,number"`
 	OnSale   bool    `validate:"required,boolean"`
+	Stores   []int   `validate:"number,dive"`
 }
 
 type Store struct {
