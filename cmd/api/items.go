@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"goweb/testapp"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -38,7 +39,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	err = validate.Struct(item)
 
 	if err != nil {
-		app.writeJSON(w, http.StatusInternalServerError, err, nil)
+		log.Panic(err)
 		return
 	}
 
@@ -52,7 +53,22 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	})
 
 	if err != nil {
-		app.writeJSON(w, http.StatusInternalServerError, err, nil)
+		log.Panic(err)
+	}
+
+	if len(itemFormData.Stores) > 0 {
+		id, _ := queries.LastInsertedId(ctx)
+
+		for _, v := range itemFormData.Stores {
+			err := queries.StoreItemCreate(ctx, testapp.StoreItemCreateParams{
+				StoreID: uint32(v),
+				ItemID:  uint32(id),
+			})
+
+			if err != nil {
+				log.Panic(err)
+			}
+		}
 	}
 
 	db.Close()

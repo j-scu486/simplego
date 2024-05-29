@@ -83,3 +83,32 @@ func (q *Queries) GetItem(ctx context.Context, id uint32) (GetItemRow, error) {
 	)
 	return i, err
 }
+
+const lastInsertedId = `-- name: LastInsertedId :one
+SELECT LAST_INSERT_ID() AS id
+`
+
+func (q *Queries) LastInsertedId(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, lastInsertedId)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
+const storeItemCreate = `-- name: StoreItemCreate :exec
+INSERT INTO goweb.stores_items (
+  store_id, item_id
+) VALUES (
+  ?, ?
+)
+`
+
+type StoreItemCreateParams struct {
+	StoreID uint32
+	ItemID  uint32
+}
+
+func (q *Queries) StoreItemCreate(ctx context.Context, arg StoreItemCreateParams) error {
+	_, err := q.db.ExecContext(ctx, storeItemCreate, arg.StoreID, arg.ItemID)
+	return err
+}
