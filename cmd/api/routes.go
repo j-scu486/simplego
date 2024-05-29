@@ -12,7 +12,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/items", app.showItemHandler)
 	router.HandlerFunc(http.MethodPost, "/item", app.createItemHandler)
 
-	// router.HandlerFunc(http.MethodPost, "/store", app.createStoreHandler)
+	router.HandlerFunc(http.MethodPost, "/store", app.createStoreHandler)
 	// router.HandlerFunc(http.MethodGet, "/store/:id", app.showStoreHandler)
 	// router.HandlerFunc(http.MethodGet, "/store/:id/items", app.showStoreItemsHandler)
 
