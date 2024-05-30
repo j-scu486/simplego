@@ -80,8 +80,7 @@ func (app *application) showItemHandler(w http.ResponseWriter, r *http.Request) 
 	if name == "" {
 		items, _ := queries.GetAllItems(ctx)
 
-		jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
-		if jsonErr != nil {
+		if jsonErr := app.writeJSON(w, http.StatusOK, items, nil); jsonErr != nil {
 			app.logger.Error(jsonErr.Error())
 			http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
 		}
@@ -97,9 +96,7 @@ func (app *application) showItemHandler(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
-
-		if jsonErr != nil {
+		if jsonErr := app.writeJSON(w, http.StatusOK, items, nil); jsonErr != nil {
 			app.logger.Error(jsonErr.Error())
 			http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
 		}
