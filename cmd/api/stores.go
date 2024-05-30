@@ -31,9 +31,7 @@ func (app *application) showStoreItemsHandler(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
-
-	if jsonErr != nil {
+	if jsonErr := app.writeJSON(w, http.StatusOK, items, nil); jsonErr != nil {
 		app.logger.Error(jsonErr.Error())
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
 	}
@@ -61,9 +59,7 @@ func (app *application) showStoreHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
-
-	if jsonErr != nil {
+	if jsonErr := app.writeJSON(w, http.StatusOK, items, nil); jsonErr != nil {
 		app.logger.Error(jsonErr.Error())
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
 	}
