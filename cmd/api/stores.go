@@ -42,7 +42,7 @@ func (app *application) showStoreHandler(w http.ResponseWriter, r *http.Request)
 	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
 
 	if err != nil {
-		http.Error(w, "Invalid 'id'", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
