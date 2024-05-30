@@ -1,5 +1,5 @@
 -- name: GetItem :one
-SELECT i.*, s.*
+SELECT i.*, s.name AS store_name, s.owner
 FROM goweb.items i
 JOIN goweb.stores_items si ON i.id = si.item_id
 JOIN goweb.stores s ON si.store_id = s.id
