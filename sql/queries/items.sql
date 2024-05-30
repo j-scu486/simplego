@@ -19,12 +19,5 @@ INSERT INTO goweb.items (
   ?, ?, ?, ?, NOW(), NOW(), NULL
 );
 
--- name: StoreItemCreate :exec
-INSERT INTO goweb.stores_items (
-  store_id, item_id
-) VALUES (
-  ?, ?
-);
-
 -- name: LastInsertedId :one
 SELECT LAST_INSERT_ID() AS id;
