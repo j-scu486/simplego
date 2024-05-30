@@ -6,6 +6,12 @@ JOIN goweb.stores s ON si.store_id = s.id
 WHERE i.name LIKE ?
 LIMIT 1;
 
+-- name: GetAllItems :many
+SELECT i.*, s.name AS store_name, s.owner
+FROM goweb.items i
+LEFT JOIN goweb.stores_items si ON i.id = si.item_id
+LEFT JOIN goweb.stores s ON si.store_id = s.id;
+
 -- name: CreateItem :exec
 INSERT INTO goweb.items (
   name, price, quantity, onSale, created_at, updated_at, deleted_at

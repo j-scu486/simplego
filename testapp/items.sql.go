@@ -36,6 +36,60 @@ func (q *Queries) CreateItem(ctx context.Context, arg CreateItemParams) error {
 	return err
 }
 
+const getAllItems = `-- name: GetAllItems :many
+SELECT i.id, i.created_at, i.updated_at, i.deleted_at, i.name, i.price, i.quantity, i.onsale, s.name AS store_name, s.owner
+FROM goweb.items i
+LEFT JOIN goweb.stores_items si ON i.id = si.item_id
+LEFT JOIN goweb.stores s ON si.store_id = s.id
+`
+
+type GetAllItemsRow struct {
+	ID        uint32
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt sql.NullTime
+	Name      string
+	Price     float64
+	Quantity  uint32
+	Onsale    int8
+	StoreName sql.NullString
+	Owner     NullStoresOwner
+}
+
+func (q *Queries) GetAllItems(ctx context.Context) ([]GetAllItemsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllItems)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllItemsRow
+	for rows.Next() {
+		var i GetAllItemsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Name,
+			&i.Price,
+			&i.Quantity,
+			&i.Onsale,
+			&i.StoreName,
+			&i.Owner,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getItem = `-- name: GetItem :one
 SELECT i.id, i.created_at, i.updated_at, i.deleted_at, i.name, i.price, i.quantity, i.onsale, s.id, s.created_at, s.updated_at, s.deleted_at, s.name, s.owner
 FROM goweb.items i

@@ -74,28 +74,34 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 func (app *application) showItemHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 
-	if name == "" {
-		http.Error(w, "Item name is not valid!", http.StatusBadRequest)
-		return
-	}
-
 	queries, ctx, db := app.connectDB()
 	defer db.Close()
-	items, queryErr := queries.GetItem(ctx, `%`+name+`%`)
 
-	if queryErr != nil {
-		msg := fmt.Sprintf("Could not find item with name %s", name)
+	if name == "" {
+		items, _ := queries.GetAllItems(ctx)
 
-		http.Error(w, msg, http.StatusNotFound)
-		app.logger.Error(queryErr.Error())
+		jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
+		if jsonErr != nil {
+			app.logger.Error(jsonErr.Error())
+			http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		}
+	} else {
+		items, queryErr := queries.GetItem(ctx, `%`+name+`%`)
 
-		return
-	}
+		if queryErr != nil {
+			msg := fmt.Sprintf("Could not find item with name %s", name)
 
-	jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
+			http.Error(w, msg, http.StatusNotFound)
+			app.logger.Error(queryErr.Error())
 
-	if jsonErr != nil {
-		app.logger.Error(jsonErr.Error())
-		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+			return
+		}
+
+		jsonErr := app.writeJSON(w, http.StatusOK, items, nil)
+
+		if jsonErr != nil {
+			app.logger.Error(jsonErr.Error())
+			http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)
+		}
 	}
 }
