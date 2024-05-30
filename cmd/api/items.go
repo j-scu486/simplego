@@ -18,8 +18,7 @@ type ItemFormData struct {
 }
 
 func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
+	if err := r.ParseForm(); err != nil {
 		app.logger.Error(err.Error())
 		http.Error(w, "Error parsing form data", http.StatusBadRequest)
 		return
@@ -35,9 +34,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 		OnSale:   itemFormData.OnSale,
 	}
 
-	err = validate.Struct(item)
-
-	if err != nil {
+	if err := validate.Struct(item); err != nil {
 		app.logger.Error(err.Error())
 		return
 	}
@@ -45,7 +42,7 @@ func (app *application) createItemHandler(w http.ResponseWriter, r *http.Request
 	queries, ctx, db := app.connectDB()
 	defer db.Close()
 
-	err = queries.CreateItem(ctx, testapp.CreateItemParams{
+	err := queries.CreateItem(ctx, testapp.CreateItemParams{
 		Name:     item.Name,
 		Price:    item.Price,
 		Quantity: uint32(item.Quantity),

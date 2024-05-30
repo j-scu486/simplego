@@ -70,8 +70,8 @@ func (app *application) showStoreHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
+
+	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error parsing form data", http.StatusBadRequest)
 		return
 	}
@@ -81,9 +81,7 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 		Owner: r.FormValue("owner"),
 	}
 
-	err = validate.Struct(store)
-
-	if err != nil {
+	if err := validate.Struct(store); err != nil {
 		app.logger.Error(err.Error())
 		app.writeJSON(w, http.StatusBadRequest, err, nil)
 		return
@@ -92,7 +90,7 @@ func (app *application) createStoreHandler(w http.ResponseWriter, r *http.Reques
 	queries, ctx, db := app.connectDB()
 	defer db.Close()
 
-	err = queries.CreateStore(ctx, testapp.CreateStoreParams{
+	err := queries.CreateStore(ctx, testapp.CreateStoreParams{
 		Name:  store.Name,
 		Owner: testapp.StoresOwner(store.Owner),
 	})
